@@ -17,26 +17,7 @@ class AlbumTrack {
     + hashCode(): int
     + toString(): String
 }
-class Playlist {
-    - @DynamoDBHashKey id: String
-    - name: String
-    - customerId: String
-    - songCount: Integer
-    - tags: Set<String>
-    - songList: List<AlbumTrack>
-    + getId(): String
-    + setId(id: String): void
-    + getName(): String
-    + setName(name: String): void
-    + getCustomerId(): String
-    + setCustomerId(customerId: String): void
-    + getSongCount(): Integer
-    + setSongCount(songCount: Integer): void
-    + getTags(): Set<String>
-    + setTags(tags: Set<String>): void
-    + getSongList(): List<AlbumTrack>
-    + setSongList(songList: List<AlbumTrack>): void
-}
+
 class AddSongToPlaylistActivity {
     - log: Logger
     - playlistDao: PlaylistDao
@@ -61,6 +42,27 @@ class GetPlaylistSongsActivity {
     - playlistDao: PlaylistDao
     + GetPlaylistSongsActivity(playlistDao: PlaylistDao): GetPlaylistSongsActivity
     + handleRequest(getPlaylistSongsRequest: GetPlaylistSongsRequest, context: Context): GetPlaylistSongsResult
+}
+class Playlist {
+
+    + getId(): String
+    + setId(id: String): void
+    + getName(): String
+    + setName(name: String): void
+    + getCustomerId(): String
+    + setCustomerId(customerId: String): void
+    + getSongCount(): Integer
+    + setSongCount(songCount: Integer): void
+    + getTags(): Set<String>
+    + setTags(tags: Set<String>): void
+    + getSongList(): List<AlbumTrack>
+    + setSongList(songList: List<AlbumTrack>): void
+    - @DynamoDBHashKey id: String
+    - name: String
+    - customerId: String
+    - songCount: Integer
+    - tags: Set<String>
+    - songList: List<AlbumTrack>
 }
 class UpdatePlaylistActivity {
     - log: Logger
