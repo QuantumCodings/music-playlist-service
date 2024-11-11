@@ -1,1 +1,109 @@
-PARTICIPANTS: use this file for creating the class diagram in mastery task 01
+@startuml
+class AlbumTrack {
+    - @DynamoDBHashKey asin: String
+    - @DynamoDBRangeKey trackNumber: Integer
+    - albumName: String
+    - songTitle: String
+    + AlbumTrack(asin: String, trackNumber: Integer, albumName: String, songTitle: String): AlbumTrack
+    + getAsin(): String
+    + setAsin(asin: String): void
+    + getTrackNumber(): Integer
+    + setTrackNumber(trackNumber: Integer): void
+    + getAlbumName(): String
+    + setAlbumName(albumName: String): void
+    + getSongTitle(): String
+    + setSongTitle(songTitle: String): void
+    + equals(o: Object): boolean
+    + hashCode(): int
+    + toString(): String
+}
+class Playlist {
+    - @DynamoDBHashKey id: String
+    - name: String
+    - customerId: String
+    - songCount: Integer
+    - tags: Set<String>
+    - songList: List<AlbumTrack>
+    + getId(): String
+    + setId(id: String): void
+    + getName(): String
+    + setName(name: String): void
+    + getCustomerId(): String
+    + setCustomerId(customerId: String): void
+    + getSongCount(): Integer
+    + setSongCount(songCount: Integer): void
+    + getTags(): Set<String>
+    + setTags(tags: Set<String>): void
+    + getSongList(): List<AlbumTrack>
+    + setSongList(songList: List<AlbumTrack>): void
+}
+class AddSongToPlaylistActivity {
+    - log: Logger
+    - playlistDao: PlaylistDao
+    - albumTrackDao: AlbumTrackDao
+    + AddSongToPlaylistActivity(playlistDao: PlaylistDao, albumTrackDao: AlbumTrackDao): AddSongToPlaylistActivity
+    + handleRequest(addSongToPlaylistRequest: AddSongToPlaylistRequest, context: Context): AddSongToPlaylistResult
+}
+class CreatePlaylistActivity {
+    - log: Logger
+    - playlistDao: PlaylistDao
+    + CreatePlaylistActivity(playlistDao: PlaylistDao): CreatePlaylistActivity
+    + handleRequest(createPlaylistRequest: CreatePlaylistRequest, context: Context): CreatePlaylistResult
+}
+class GetPlaylistActivity {
+    - log: Logger
+    - playlistDao: PlaylistDao
+    + GetPlaylistActivity(playlistDao: PlaylistDao): GetPlaylistActivity
+    + handleRequest(getPlaylistRequest: GetPlaylistRequest, context: Context): GetPlaylistResult
+}
+class GetPlaylistSongsActivity {
+    - log: Logger
+    - playlistDao: PlaylistDao
+    + GetPlaylistSongsActivity(playlistDao: PlaylistDao): GetPlaylistSongsActivity
+    + handleRequest(getPlaylistSongsRequest: GetPlaylistSongsRequest, context: Context): GetPlaylistSongsResult
+}
+class UpdatePlaylistActivity {
+    - log: Logger
+    - playlistDao: PlaylistDao
+    + UpdatePlaylistActivity(playlistDao: PlaylistDao): UpdatePlaylistActivity
+    + handleRequest(updatePlaylistRequest: UpdatePlaylistRequest, context: Context): UpdatePlaylistResult
+}
+class AlbumTrackDao {
+    - dynamoDbMapper: DynamoDBMapper
+    + AlbumTrackDao(dynamoDbMapper: DynamoDBMapper): AlbumTrackDao
+}
+class PlaylistDao {
+    - dynamoDbMapper: DynamoDBMapper
+    + PlaylistDao(dynamoDbMapper: DynamoDBMapper): PlaylistDao
+    + getPlaylist(id: String): Playlist
+}
+class AlbumTrackNotFoundException {
+    - serialVersionUID: static final long
+    + AlbumTrackNotFoundException(): AlbumTrackNotFoundException
+    + AlbumTrackNotFoundException(message: String): AlbumTrackNotFoundException
+    + AlbumTrackNotFoundException(cause: Throwable): AlbumTrackNotFoundException
+    + AlbumTrackNotFoundException(message: String, cause: Throwable): AlbumTrackNotFoundException
+}
+class InvalidAttributeValueException {
+    - serialVersionUID: static final long
+    + InvalidAttributeValueException(): InvalidAttributeValueException
+    + InvalidAttributeValueException(message: String): InvalidAttributeValueException
+    + InvalidAttributeValueException(cause: Throwable): InvalidAttributeValueException
+    + InvalidAttributeValueException(message: String, cause: Throwable): InvalidAttributeValueException
+}
+class PlaylistNotFoundException {
+    - serialVersionUID: static final long
+    + PlaylistNotFoundException(): PlaylistNotFoundException
+    + PlaylistNotFoundException(message: String): PlaylistNotFoundException
+    + PlaylistNotFoundException(cause: Throwable): PlaylistNotFoundException
+    + PlaylistNotFoundException(message: String, cause: Throwable): PlaylistNotFoundException
+}
+' Relationships
+Playlist o-- AlbumTrack
+AddSongToPlaylistActivity o-- AlbumTrackDao
+CreatePlaylistActivity o-- PlaylistDao
+AddSongToPlaylistActivity o-- PlaylistDao
+GetPlaylistActivity o-- PlaylistDao
+GetPlaylistSongsActivity o-- PlaylistDao
+UpdatePlaylistActivity o-- PlaylistDao
+@enduml
