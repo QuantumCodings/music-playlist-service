@@ -1,13 +1,16 @@
 package com.amazon.ata.music.playlist.service.dynamodb;
-import com.amazon.ata.music.playlist.service.dynamodb.models.AlbumTrack;
+
 import com.amazon.ata.music.playlist.service.dynamodb.models.Playlist;
 import com.amazon.ata.music.playlist.service.exceptions.PlaylistNotFoundException;
+
 import com.amazon.ata.music.playlist.service.models.PlaylistModel;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
+
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
+
 /**
  * Accesses data for a playlist using {@link Playlist} to represent the model in DynamoDB.
  */
@@ -19,6 +22,7 @@ public class PlaylistDao {
      *
      * @param dynamoDbMapper the {@link DynamoDBMapper} used to interact with the playlists table
      */
+    @Inject
     public PlaylistDao(DynamoDBMapper dynamoDbMapper) {
         this.dynamoDbMapper = dynamoDbMapper;
     }
@@ -38,9 +42,25 @@ public class PlaylistDao {
 
         return playlist;
     }
-    public void savePlaylist(PlaylistModel playlistModel) {
+
+    public Playlist savePlaylist(PlaylistModel playlistModel) {
+
+
+        Playlist updatedPlaylist;
+
         Set<String> tagsSet = new HashSet<>(playlistModel.getTags());
-        Playlist playlist = new Playlist(playlistModel.getId(), playlistModel.getName(), playlistModel.getCustomerId(), 0, tagsSet, null);
-        dynamoDbMapper.save(playlist);
+
+        if (getPlaylist(playlistModel.getId()) == null) {
+            updatedPlaylist = new Playlist(playlistModel.getId(), playlistModel.getName(), playlistModel.getCustomerId(), playlistModel.getSongCount(), tagsSet, new ArrayList<>());
+        } else {
+            Playlist existingPlaylist = getPlaylist(playlistModel.getId());
+            updatedPlaylist = new Playlist(playlistModel.getId(), playlistModel.getName(), playlistModel.getCustomerId(), playlistModel.getSongCount(), tagsSet, existingPlaylist.getSongList());
+        }
+
+
+
+        dynamoDbMapper.save(updatedPlaylist);
+
+        return updatedPlaylist;
     }
 }

@@ -17,6 +17,27 @@ class AlbumTrack {
     + hashCode(): int
     + toString(): String
 }
+class InvalidAttributeChangeException {
+    - serialVersionUID: static final long
+
+    + InvalidAttributeChangeException(): InvalidAttributeChangeException
+    + InvalidAttributeChangeException(message: String): InvalidAttributeChangeException
+    + InvalidAttributeChangeException(cause: Throwable): InvalidAttributeChangeException
+    + InvalidAttributeChangeException(message: String, cause: Throwable): InvalidAttributeChangeException
+
+}
+
+class InvalidAttributeException {
+    - serialVersionUID: static final long
+
+    + InvalidAttributeException(): InvalidAttributeException
+    + InvalidAttributeException(message: String): InvalidAttributeException
+    + InvalidAttributeException(cause: Throwable): InvalidAttributeException
+    + InvalidAttributeException(message: String, cause: Throwable): InvalidAttributeException
+
+}
+InvalidAttributeException <|-- InvalidAttributeValueException
+InvalidAttributeException <|-- InvalidAttributeChangeException
 
 class AddSongToPlaylistActivity {
     - log: Logger
