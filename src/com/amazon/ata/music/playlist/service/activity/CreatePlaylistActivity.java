@@ -1,5 +1,4 @@
 package com.amazon.ata.music.playlist.service.activity;
-import com.amazon.ata.music.playlist.service.dynamodb.models.AlbumTrack;
 import com.amazon.ata.music.playlist.service.exceptions.InvalidAttributeValueException;
 import com.amazon.ata.music.playlist.service.models.requests.CreatePlaylistRequest;
 import com.amazon.ata.music.playlist.service.models.results.CreatePlaylistResult;
@@ -10,7 +9,8 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import java.util.List;
+
+import javax.inject.Inject;
 /**
  * Implementation of the CreatePlaylistActivity for the MusicPlaylistService's CreatePlaylist API.
  *
@@ -25,6 +25,7 @@ public class CreatePlaylistActivity implements RequestHandler<CreatePlaylistRequ
      *
      * @param playlistDao PlaylistDao to access the playlists table.
      */
+    @Inject
     public CreatePlaylistActivity(PlaylistDao playlistDao) {
         this.playlistDao = playlistDao;
     }
@@ -45,15 +46,20 @@ public class CreatePlaylistActivity implements RequestHandler<CreatePlaylistRequ
     @Override
     public CreatePlaylistResult handleRequest(final CreatePlaylistRequest createPlaylistRequest, Context context) {
         log.info("Received CreatePlaylistRequest {}", createPlaylistRequest);
+
+
         if (!MusicPlaylistServiceUtils.isValidString(createPlaylistRequest.getName())) {
             throw new InvalidAttributeValueException("Invalid Playlist name");
         }
+
+        String playlistId = MusicPlaylistServiceUtils.generatePlaylistId();
         PlaylistModel playlistModel = PlaylistModel.builder()
-                .withId(MusicPlaylistServiceUtils.generatePlaylistId())
+                .withId(playlistId)
                 .withName(createPlaylistRequest.getName())
                 .withCustomerId(createPlaylistRequest.getCustomerId())
                 .withTags(createPlaylistRequest.getTags())
                 .build();
+
         playlistDao.savePlaylist(playlistModel);
 
         return CreatePlaylistResult.builder()

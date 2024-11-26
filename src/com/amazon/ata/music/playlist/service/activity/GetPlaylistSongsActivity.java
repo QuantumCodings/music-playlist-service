@@ -4,14 +4,17 @@ import com.amazon.ata.music.playlist.service.models.requests.GetPlaylistSongsReq
 import com.amazon.ata.music.playlist.service.models.results.GetPlaylistSongsResult;
 import com.amazon.ata.music.playlist.service.models.SongModel;
 import com.amazon.ata.music.playlist.service.dynamodb.PlaylistDao;
-
+import com.amazon.ata.music.playlist.service.converters.ModelConverter;
+import com.amazon.ata.music.playlist.service.dynamodb.models.AlbumTrack;
+import com.amazon.ata.music.playlist.service.dynamodb.models.Playlist;
+import com.amazon.ata.music.playlist.service.exceptions.PlaylistNotFoundException;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.util.Collections;
-
+import javax.inject.Inject;
+import java.util.List;
+import java.util.ArrayList;
 /**
  * Implementation of the GetPlaylistSongsActivity for the MusicPlaylistService's GetPlaylistSongs API.
  *
@@ -26,6 +29,7 @@ public class GetPlaylistSongsActivity implements RequestHandler<GetPlaylistSongs
      *
      * @param playlistDao PlaylistDao to access the playlist table.
      */
+    @Inject
     public GetPlaylistSongsActivity(PlaylistDao playlistDao) {
         this.playlistDao = playlistDao;
     }
@@ -44,8 +48,23 @@ public class GetPlaylistSongsActivity implements RequestHandler<GetPlaylistSongs
     public GetPlaylistSongsResult handleRequest(final GetPlaylistSongsRequest getPlaylistSongsRequest, Context context) {
         log.info("Received GetPlaylistSongsRequest {}", getPlaylistSongsRequest);
 
+        ModelConverter modelConverter = new ModelConverter();
+
+        Playlist targetPlaylist;
+        try {
+            targetPlaylist = playlistDao.getPlaylist(getPlaylistSongsRequest.getId());
+        } catch (PlaylistNotFoundException e) {
+            throw new PlaylistNotFoundException("Playlist with id " + getPlaylistSongsRequest.getId() + " not found.", e);
+        }
+
+
+        List<SongModel> songModelList = new ArrayList<>();
+        for (AlbumTrack track : targetPlaylist.getSongList()) {
+            songModelList.add(modelConverter.toSongModel(track));
+        }
+
         return GetPlaylistSongsResult.builder()
-                .withSongList(Collections.singletonList(new SongModel()))
+                .withSongList(songModelList)
                 .build();
     }
 }
