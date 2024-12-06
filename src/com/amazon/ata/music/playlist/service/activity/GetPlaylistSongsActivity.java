@@ -13,8 +13,10 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import javax.inject.Inject;
+import java.util.Collections;
 import java.util.List;
 import java.util.ArrayList;
+import com.amazon.ata.music.playlist.service.models.SongOrder;
 /**
  * Implementation of the GetPlaylistSongsActivity for the MusicPlaylistService's GetPlaylistSongs API.
  *
@@ -57,8 +59,23 @@ public class GetPlaylistSongsActivity implements RequestHandler<GetPlaylistSongs
             throw new PlaylistNotFoundException("Playlist with id " + getPlaylistSongsRequest.getId() + " not found.", e);
         }
 
-
+        List<AlbumTrack> targetSongList = targetPlaylist.getSongList();
         List<SongModel> songModelList = new ArrayList<>();
+
+        if (targetSongList != null) {
+            return GetPlaylistSongsResult.builder()
+                    .withSongList(songModelList)
+                    .build();
+        }
+
+        if (getPlaylistSongsRequest.getOrder().equals(SongOrder.REVERSED)) {
+            Collections.reverse(targetSongList);
+        } else if (getPlaylistSongsRequest.getOrder().equals(SongOrder.SHUFFLED)) {
+            Collections.shuffle(targetSongList);
+        }
+
+
+
         for (AlbumTrack track : targetPlaylist.getSongList()) {
             songModelList.add(modelConverter.toSongModel(track));
         }

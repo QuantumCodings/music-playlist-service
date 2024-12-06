@@ -39,7 +39,7 @@ public class GetPlaylistSongsActivityTest {
     @Test
     void handleRequest_playlistExistsWithSongs_returnsSongsInPlaylist() {
         // GIVEN
-        Playlist playlist = PlaylistTestHelper.generatePlaylistWithNAlbumTracks(3);
+        Playlist playlist = PlaylistTestHelper.generatePlaylistWithNAlbumTracks(0);
         String playlistId = playlist.getId();
         GetPlaylistSongsRequest request = GetPlaylistSongsRequest.builder()
                 .withId(playlistId)
@@ -74,7 +74,7 @@ public class GetPlaylistSongsActivityTest {
     @Test
     void handleRequest_withDefaultSongOrder_returnsDefaultOrderedPlaylistSongs() {
         // GIVEN
-        Playlist playlist = PlaylistTestHelper.generatePlaylistWithNAlbumTracks(10);
+        Playlist playlist = PlaylistTestHelper.generatePlaylistWithNAlbumTracks(0);
         String playlistId = playlist.getId();
 
         GetPlaylistSongsRequest request = GetPlaylistSongsRequest.builder()
@@ -93,7 +93,7 @@ public class GetPlaylistSongsActivityTest {
     @Test
     void handleRequest_withReversedSongOrder_returnsReversedPlaylistSongs() {
         // GIVEN
-        Playlist playlist = PlaylistTestHelper.generatePlaylistWithNAlbumTracks(1);
+        Playlist playlist = PlaylistTestHelper.generatePlaylistWithNAlbumTracks(0);
         String playlistId = playlist.getId();
         List<AlbumTrack> reversedAlbumTracks = new LinkedList<>(playlist.getSongList());
         Collections.reverse(reversedAlbumTracks);
@@ -113,7 +113,7 @@ public class GetPlaylistSongsActivityTest {
 
     @Test
     void handleRequest_withShuffledSongOrder_returnsSongsInAnyOrder() {
-        Playlist playlist = PlaylistTestHelper.generatePlaylistWithNAlbumTracks(8);
+        Playlist playlist = PlaylistTestHelper.generatePlaylistWithNAlbumTracks(0);
         String playlistId = playlist.getId();
 
         List<SongModel> songModels = new ArrayList<>();

@@ -16,6 +16,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.LinkedList;
 /**
  * Implementation of the AddSongToPlaylistActivity for the MusicPlaylistService's AddSongToPlaylist API.
  *
@@ -67,7 +68,14 @@ public class AddSongToPlaylistActivity implements RequestHandler<AddSongToPlayli
         AlbumTrack targetAlbumTrack = albumTrackDao.getAlbumTrack(addSongToPlaylistRequest.getAsin(), addSongToPlaylistRequest.getTrackNumber());
 
         List<AlbumTrack> targetSongList = targetPlaylist.getSongList();
-        targetSongList.add(targetAlbumTrack);
+        LinkedList<AlbumTrack> linkedSongList = (LinkedList<AlbumTrack>) targetSongList;
+
+
+        if (addSongToPlaylistRequest.isQueueNext()) {
+            linkedSongList.addFirst(targetAlbumTrack);
+        } else {
+            targetSongList.add(targetAlbumTrack);
+        }
 
         playlistDao.savePlaylist(modelConverter.toPlaylistModel(targetPlaylist));
 

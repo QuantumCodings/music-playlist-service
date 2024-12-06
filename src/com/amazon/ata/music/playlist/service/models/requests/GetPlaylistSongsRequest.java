@@ -30,6 +30,9 @@ public class GetPlaylistSongsRequest {
     }
 
     public SongOrder getOrder() {
+        if (order == null) {
+            return SongOrder.DEFAULT;
+        }
         return order;
     }
 
